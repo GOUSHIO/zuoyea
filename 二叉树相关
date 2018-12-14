@@ -1,0 +1,203 @@
+#include <iostream>
+#include "bintreenode.h"
+#include "binarytree.h"
+
+int main()
+{
+    BinaryTree<char> T;
+    cout << "二叉树高度：" << T.height() << endl;
+    cout << "结点个数：" << T.nodeCount() << endl;
+    cout << "叶子结点个数：" << T.countLeaves() << endl;
+    T.preOrder();
+    cout << endl;
+    T.inOrder();
+    cout << endl;
+    T.postOrder();
+    cout << endl;
+    return 0;
+}
+
+// bintreenode.h
+#ifndef BINTREENODE_H_INCLUDED
+#define BINTREENODE_H_INCLUDED
+
+template<class Elemtype>
+struct BinTreeNode
+{
+    Elemtype data;
+    BinTreeNode<Elemtype> *leftChild;
+    BinTreeNode<Elemtype> *rightChild;
+    BinTreeNode();
+    BinTreeNode(Elemtype &e, BinTreeNode *leftChild = nullptr, BinTreeNode *rightChild = nullptr);
+};
+
+template<class Elemtype>
+BinTreeNode<Elemtype> ::BinTreeNode()
+{
+    leftChild = rightChild = nullptr;
+}
+
+template<class Elemtype>
+BinTreeNode<Elemtype> ::BinTreeNode(Elemtype &e, BinTreeNode *lChild, BinTreeNode *rChild)
+{
+    data = e;
+    leftChild = lChild;
+    rightChild = rChild;
+}
+
+#endif // BINTREENODE_H_INCLUDED
+
+// binarytree.h
+#ifndef BINARYTREE_H_INCLUDED
+#define BINARYTREE_H_INCLUDED
+
+#include <iostream>
+using namespace std;
+
+template<class Elemtype>
+class BinaryTree
+{
+    protected:
+        BinTreeNode<Elemtype> *root;
+        void preOrderHelp(BinTreeNode<Elemtype> *r);
+        void inOrderHelp(BinTreeNode<Elemtype> *r);
+        void postOrderHelp(BinTreeNode<Elemtype> *r);
+        int heightHelp(BinTreeNode<Elemtype> *r);
+        int nodeCountHelp(BinTreeNode<Elemtype> *r);
+        int countLeavesHelp(BinTreeNode<Elemtype> *r);
+        BinTreeNode<Elemtype> *createTree();
+
+    public:
+        BinaryTree();
+        void preOrder();
+        void inOrder();
+        void postOrder();
+        int nodeCount();
+        int countLeaves();
+        int height();
+};
+template<class Elemtype>
+BinaryTree<Elemtype>::BinaryTree()
+{
+    root = createTree();
+}
+
+template<class Elemtype>
+BinTreeNode<Elemtype> *BinaryTree<Elemtype>::createTree()
+{
+    char ch;
+    cout << "Input: ";
+    cin >> ch;
+    BinTreeNode<Elemtype> *r;
+    if(ch == '*') r = nullptr;
+    else
+    {
+        r = new BinTreeNode<Elemtype>(ch);
+        r->leftChild = createTree();
+        r->rightChild = createTree();
+    }
+    return r;
+}
+
+template<class Elemtype>
+void BinaryTree<Elemtype>::preOrder()
+{
+    cout << "先序遍历： ";
+    preOrderHelp(root);
+}
+
+template<class Elemtype>
+void BinaryTree<Elemtype>::preOrderHelp(BinTreeNode<Elemtype> *r)
+{
+    if(r != nullptr)
+    {
+        cout << r->data << " ";
+        preOrderHelp(r->leftChild);
+        preOrderHelp(r->rightChild);
+    }
+}
+
+template<class Elemtype>
+void BinaryTree<Elemtype>::inOrder()
+{
+    cout << "中序遍历： ";
+    inOrderHelp(root);
+}
+
+template<class Elemtype>
+void BinaryTree<Elemtype>::inOrderHelp(BinTreeNode<Elemtype> *r)
+{
+    if(r != nullptr)
+    {
+        inOrderHelp(r->leftChild);
+        cout<< r->data << " ";
+        inOrderHelp(r->rightChild);
+    }
+}
+
+template<class Elemtype>
+void BinaryTree<Elemtype>::postOrder()
+{
+    cout<<"后序遍历： ";
+    postOrderHelp(root);
+}
+
+template<class Elemtype>
+void BinaryTree<Elemtype>::postOrderHelp(BinTreeNode<Elemtype> *r)
+{
+    if(r!=nullptr)
+    {
+        postOrderHelp(r->leftChild);
+        postOrderHelp(r->rightChild);
+        cout<<r->data<<" ";
+    }
+}
+
+template<class Elemtype>
+int BinaryTree<Elemtype>::nodeCount()
+{
+    return nodeCountHelp(root);
+}
+
+template<class Elemtype>
+int BinaryTree<Elemtype>::nodeCountHelp(BinTreeNode<Elemtype> *r)
+{
+    if(r == nullptr) return 0;
+    else return nodeCountHelp(r->leftChild) + nodeCountHelp(r->rightChild) + 1;
+}
+
+template<class Elemtype>
+int BinaryTree<Elemtype>::countLeaves()
+{
+    return countLeavesHelp(root);
+}
+
+template<class Elemtype>
+int BinaryTree<Elemtype>::countLeavesHelp(BinTreeNode<Elemtype> *r)
+{
+    if(r == nullptr) return 0;
+    if(r->leftChild == r->rightChild && r->rightChild == nullptr) return 1;
+    else return countLeavesHelp(r->leftChild) + countLeavesHelp(r->rightChild);
+}
+
+template<class Elemtype>
+int BinaryTree<Elemtype>::height()
+{
+    return heightHelp(root);
+}
+
+template<class Elemtype>
+int BinaryTree<Elemtype>:: heightHelp(BinTreeNode<Elemtype> *r)
+{
+    if(r == nullptr) return 0;
+    else
+    {
+        int h1, h2;
+        h1 = heightHelp(r->leftChild);
+        h2 = heightHelp(r->rightChild);
+        return (h1 > h2? h1: h2) + 1;
+    }
+}
+
+#endif // BINARYTREE_H_INCLUDED
+
